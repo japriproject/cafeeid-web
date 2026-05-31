@@ -53,46 +53,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	function load_env_file($path)
-	{
-		if (!is_file($path) || !is_readable($path))
-		{
-			return;
-		}
-
-		$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		foreach ($lines as $line)
-		{
-			$line = trim($line);
-			if ($line === '' || $line[0] === '#')
-			{
-				continue;
-			}
-
-			$parts = explode('=', $line, 2);
-			if (count($parts) !== 2)
-			{
-				continue;
-			}
-
-			$key = trim($parts[0]);
-			$value = trim($parts[1]);
-			$value = trim($value, "\"'");
-
-			if ($key === '' || getenv($key) !== false)
-			{
-				continue;
-			}
-
-			putenv($key . '=' . $value);
-			$_ENV[$key] = $value;
-			$_SERVER[$key] = $value;
-		}
-	}
-
-	load_env_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
-
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
+	define('ENVIRONMENT', 'production');
 
 /*
  *---------------------------------------------------------------

@@ -191,10 +191,9 @@ class Auth extends CI_Controller
 
     private function is_super_admin($username, $password)
     {
-        $super_user = getenv('CAFEEID_SUPER_USER') ?: 'admin';
-        $super_hash = getenv('CAFEEID_SUPER_PASS_HASH');
-        $super_pass = getenv('CAFEEID_SUPER_PASS') ?: 'admin';
-        $is_local = isset($_SERVER['HTTP_HOST']) && preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $_SERVER['HTTP_HOST']);
+        $super_user = $this->config->item('cafeeid_super_user') ?: 'admin';
+        $super_hash = $this->config->item('cafeeid_super_pass_hash');
+        $super_pass = $this->config->item('cafeeid_super_pass') ?: 'admin';
 
         if (!hash_equals($super_user, (string)$username)) {
             return FALSE;
@@ -202,10 +201,6 @@ class Auth extends CI_Controller
 
         if ($super_hash) {
             return password_verify($password, $super_hash);
-        }
-
-        if (ENVIRONMENT === 'production' && !$is_local && !getenv('CAFEEID_SUPER_PASS')) {
-            return FALSE;
         }
 
         return hash_equals($super_pass, (string)$password);

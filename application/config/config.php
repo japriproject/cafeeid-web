@@ -23,19 +23,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$is_https = (
-	(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
-	|| (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
-	|| (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
-);
+$config['base_url'] = 'http://localhost/cafeeid/ci3/';
 
-$protocol = $is_https ? 'https://' : 'http://';
-$host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-$script_name = !empty($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '/index.php';
-$base_path = rtrim(str_replace('\\', '/', dirname($script_name)), '/');
-$base_path = ($base_path === '' || $base_path === '.') ? '' : $base_path;
-
-$config['base_url'] = $protocol . $host . $base_path . '/';
+/*
+|--------------------------------------------------------------------------
+| CafeeID Settings
+|--------------------------------------------------------------------------
+*/
+$config['cafeeid_super_user'] = 'admin';
+$config['cafeeid_super_pass'] = 'admin';
+$config['cafeeid_super_pass_hash'] = '$2y$10$orGjnYROFcD5VlF9M5e1bOTgBessmUc6jmFbdjbIDyXD1L4xpUiEq';
+$config['cafeeid_telegram_bot_token'] = '8563183289:AAFC-28jp94GPrHtUo-a7uv-ZlBzouB8ULU';
+$config['cafeeid_callback_secret'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -114,7 +113,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = TRUE;
+$config['enable_hooks'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -423,7 +422,7 @@ $config['sess_regenerate_destroy'] = TRUE;
 $config['cookie_prefix']	= '';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
-$config['cookie_secure']	= $is_https;
+$config['cookie_secure']	= FALSE;
 $config['cookie_httponly'] 	= TRUE;
 $config['cookie_samesite'] 	= 'Lax';
 
@@ -476,9 +475,6 @@ $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
 $config['csrf_exclude_uris'] = array(
 	'callback',
-	'callback.php',
-	'api/callback',
-	'api/callback/callback.php',
 );
 
 /*

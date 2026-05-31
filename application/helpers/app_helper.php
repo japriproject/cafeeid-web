@@ -11,7 +11,8 @@ if (!function_exists('format_rupiah')) {
 if (!function_exists('send_telegram_notification')) {
     function send_telegram_notification($chat_id, $message)
     {
-        $token = getenv('CAFEEID_TELEGRAM_BOT_TOKEN');
+        $CI =& get_instance();
+        $token = $CI->config->item('cafeeid_telegram_bot_token');
         if (empty($token) || empty($chat_id) || empty($message) || !function_exists('curl_init')) {
             return false;
         }

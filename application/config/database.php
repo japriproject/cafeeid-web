@@ -73,14 +73,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
-$is_local_host = isset($_SERVER['HTTP_HOST']) && preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $_SERVER['HTTP_HOST']);
-
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => getenv('CAFEEID_DB_HOST') ?: 'localhost',
-	'username' => getenv('CAFEEID_DB_USER') ?: ($is_local_host ? 'root' : ''),
-	'password' => getenv('CAFEEID_DB_PASS') ?: '',
-	'database' => getenv('CAFEEID_DB_NAME') ?: ($is_local_host ? 'cafee' : ''),
+	'hostname' => 'localhost',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'cafee',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

@@ -106,7 +106,7 @@ class Callback extends CI_Controller
 
     private function is_authorized()
     {
-        $secret = trim((string)getenv('CAFEEID_CALLBACK_SECRET'));
+        $secret = trim((string)$this->config->item('cafeeid_callback_secret'));
         if ($secret === '') {
             return true;
         }
