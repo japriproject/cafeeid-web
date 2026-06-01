@@ -88,10 +88,12 @@ class Checkout extends CI_Controller
         $invoice = $prefix . '-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid('', TRUE)), 0, 4));
 
         $nomor_meja = (int)$this->input->post('nomor_meja');
+        $kursi = max(1, (int)$this->input->post('kursi'));
         $durasi = max(1, (int)$this->input->post('durasi'));
         $desc_nota = 'Tipe Order: ' . strtoupper($order_type) . "\n";
         if ($order_type !== 'take_away' && $nomor_meja > 0) {
             $desc_nota .= 'Nomor Meja: ' . $nomor_meja . " \n";
+            $desc_nota .= 'Jumlah Kursi: ' . $kursi . "\n";
             $desc_nota .= 'Durasi Sewa: ' . $durasi . " Jam\n";
         }
         $desc_nota .= "Detail Item:\n" . $rincian_item;

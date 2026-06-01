@@ -133,7 +133,20 @@
                                 <div id="booking-details" class="space-y-4">
                                     <div>
                                         <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Pilih Nomor Meja</label>
-                                        <input type="number" name="nomor_meja" id="nomor_meja" min="1" placeholder="Nomor meja" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700" />
+                                        <select name="nomor_meja" id="nomor_meja" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+                                            <option value="0">Pilih nomor meja</option>
+                                            <?php for ($m = 1; $m <= 30; $m++): ?>
+                                                <option value="<?= $m ?>"><?= $m ?></option>
+                                            <?php endfor; ?>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Kursi</label>
+                                        <select name="kursi" id="kursi" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+                                            <?php for ($k = 1; $k <= 8; $k++): ?>
+                                                <option value="<?= $k ?>"><?= $k ?> kursi</option>
+                                            <?php endfor; ?>
+                                        </select>
                                     </div>
                                     <div>
                                         <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Durasi Booking (Jam)</label>
