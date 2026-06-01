@@ -130,6 +130,16 @@
                                         <option value="take_away">Bawa Pulang</option>
                                     </select>
                                 </div>
+                                <div id="booking-details" class="space-y-4">
+                                    <div>
+                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Pilih Nomor Meja</label>
+                                        <input type="number" name="nomor_meja" id="nomor_meja" min="1" placeholder="Nomor meja" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700" />
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Durasi Booking (Jam)</label>
+                                        <input type="number" name="durasi" id="durasi" min="1" max="24" value="1" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700" />
+                                    </div>
+                                </div>
                                 <div>
                                     <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Item di Keranjang</label>
                                     <div id="cart-items" class="text-xs font-bold text-gray-500 flex flex-col gap-2 py-2 min-h-[40px]">
@@ -177,6 +187,22 @@
         function rupiah(value) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
         }
+
+        function toggleBookingDetails() {
+            const orderType = document.getElementById('order_type');
+            const bookingDetails = document.getElementById('booking-details');
+            if (!orderType || !bookingDetails) return;
+
+            bookingDetails.style.display = orderType.value === 'take_away' ? 'none' : 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const orderType = document.getElementById('order_type');
+            if (orderType) {
+                orderType.addEventListener('change', toggleBookingDetails);
+                toggleBookingDetails();
+            }
+        });
 
         function renderCart() {
             const cartItems = document.getElementById('cart-items');
