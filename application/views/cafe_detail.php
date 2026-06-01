@@ -140,14 +140,7 @@
                                             <?php endfor; ?>
                                         </select>
                                     </div>
-                                    <div>
-                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Jumlah Kursi</label>
-                                        <select name="kursi" id="kursi" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
-                                            <?php for ($k = 1; $k <= 8; $k++): ?>
-                                                <option value="<?= $k ?>"><?= $k ?> kursi</option>
-                                            <?php endfor; ?>
-                                        </select>
-                                    </div>
+                                    <!-- Jumlah kursi dihapus - di-handle nanti jika diperlukan -->
                                     <div>
                                         <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Durasi Booking (Jam)</label>
                                         <input type="number" name="durasi" id="durasi" min="1" max="24" value="1" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700" />
