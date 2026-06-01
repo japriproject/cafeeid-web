@@ -141,10 +141,11 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Kursi</label>
-                                        <select name="kursi" id="kursi" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+                                        <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Pilih Nomor Kursi</label>
+                                        <select name="nomor_kursi" id="nomor_kursi" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+                                            <option value="0">Pilih nomor kursi</option>
                                             <?php for ($k = 1; $k <= 8; $k++): ?>
-                                                <option value="<?= $k ?>"><?= $k ?> kursi</option>
+                                                <option value="<?= $k ?>">Kursi <?= $k ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
