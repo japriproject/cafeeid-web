@@ -79,9 +79,16 @@
                                 <h3 class="font-black text-sm text-slate-700 mb-3 uppercase tracking-wide"><?= html_escape($group['category']->nama_kategori) ?></h3>
                                 <div class="flex overflow-x-auto hide-scroll pb-3 gap-3 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-visible">
                                     <?php foreach ($group['items'] as $menu): ?>
+                                        <?php
+                                            $menu_image = !empty($menu->image)
+                                                ? (preg_match('#^https?://#i', $menu->image)
+                                                    ? $menu->image
+                                                    : base_url('uploads/' . ltrim($menu->image, '/')))
+                                                : 'https://placehold.co/300x300/f8fafc/64748b?text=Menu';
+                                        ?>
                                         <div class="w-40 md:w-auto shrink-0 bg-white rounded-2xl p-2.5 shadow-sm border border-slate-100 hover:border-blue-200 transition relative group">
                                             <div class="aspect-square bg-gray-100 rounded-xl mb-2 overflow-hidden">
-                                                <img src="https://placehold.co/300x300/f8fafc/64748b?text=Menu" class="w-full h-full object-cover" alt="">
+                                                <img src="<?= $menu_image ?>" class="w-full h-full object-cover" alt="<?= html_escape($menu->menu_name) ?>">
                                             </div>
                                             <h4 class="font-bold text-slate-800 text-xs truncate"><?= html_escape($menu->menu_name) ?></h4>
                                             <p class="text-blue-600 font-black text-xs mt-0.5"><?= format_rupiah($menu->price) ?></p>
