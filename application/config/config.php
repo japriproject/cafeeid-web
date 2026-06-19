@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://cafeeid.japrime.id/';
+$config['base_url'] = 'http://localhost/cafeeid/';
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ $config['base_url'] = 'https://cafeeid.japrime.id/';
 */
 $config['cafeeid_super_user'] = 'admin';
 $config['cafeeid_super_pass'] = 'admin';
-$config['cafeeid_super_pass_hash'] = '$2y$10$orGjnYROFcD5VlF9M5e1bOTgBessmUc6jmFbdjbIDyXD1L4xpUiEq';
+$config['cafeeid_super_pass_hash'] = '$2y$10$v9YekfIoVf1wshdW/rpTfOILwb.7GuyOeEPF7v1P4N85muzf1zW5q';
 $config['cafeeid_telegram_bot_token'] = '8563183289:AAFC-28jp94GPrHtUo-a7uv-ZlBzouB8ULU';
 $config['cafeeid_callback_secret'] = '';
 
@@ -236,7 +236,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = (ENVIRONMENT === 'production') ? 1 : 2;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -398,7 +398,7 @@ $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'cafeeid_session';
 $config['sess_samesite'] = 'Lax';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_save_path'] = sys_get_temp_dir();
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = TRUE;
@@ -468,7 +468,7 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = TRUE;
+$config['csrf_protection'] = FALSE;
 $config['csrf_token_name'] = 'cafeeid_csrf_token';
 $config['csrf_cookie_name'] = 'cafeeid_csrf_cookie';
 $config['csrf_expire'] = 7200;
