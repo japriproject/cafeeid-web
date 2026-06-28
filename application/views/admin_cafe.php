@@ -35,6 +35,86 @@
                 </div>
             </div>
 
+            <div id="kelola-produk" class="mt-8 border-t border-slate-200 pt-8">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-wide text-blue-600 font-bold">Menu Café</p>
+                        <h2 class="text-lg font-black text-slate-800">Kelola Produk</h2>
+                    </div>
+                    <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700"><?= count($products) ?> produk</span>
+                </div>
+
+                <?php if ($this->session->flashdata('product_success')): ?>
+                    <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800"><?= html_escape($this->session->flashdata('product_success')) ?></div>
+                <?php endif; ?>
+                <?php if ($this->session->flashdata('product_error')): ?>
+                    <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-800"><?= html_escape($this->session->flashdata('product_error')) ?></div>
+                <?php endif; ?>
+
+                <div class="mt-5 grid gap-6 lg:grid-cols-[340px_1fr]">
+                    <form method="POST" enctype="multipart/form-data" id="product-form" class="h-fit rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                        <input type="hidden" name="action" id="product-action" value="create_product">
+                        <input type="hidden" name="id_menu" id="product-id" value="">
+                        <h3 id="product-form-title" class="font-black text-slate-800">Tambah Produk</h3>
+                        <div class="mt-4 grid gap-3 text-sm">
+                            <input required type="text" maxlength="100" name="menu_name" id="product-name" placeholder="Nama produk" class="rounded-xl border p-3">
+                            <select required name="id_kategori" id="product-category" class="rounded-xl border p-3">
+                                <option value="">Pilih kategori</option>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= (int)$category->id_kategori ?>"><?= html_escape($category->nama_kategori) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <input required type="number" min="1" name="price" id="product-price" placeholder="Harga" class="rounded-xl border p-3">
+                            <select name="status" id="product-status" class="rounded-xl border p-3">
+                                <option value="1">Aktif / tersedia</option>
+                                <option value="0">Nonaktif</option>
+                            </select>
+                            <label class="rounded-xl border border-dashed border-slate-300 bg-white p-3">
+                                <span class="block font-bold text-slate-700">Foto Produk</span>
+                                <span id="product-image-help" class="mb-2 block text-xs text-slate-400">Wajib. JPG, PNG, atau WebP maksimal 5 MB.</span>
+                                <input required type="file" name="product_image" id="product-image" accept="image/jpeg,image/png,image/webp" class="block w-full text-xs text-slate-500 file:mr-2 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:font-bold file:text-blue-700">
+                            </label>
+                            <div class="flex gap-2">
+                                <button type="submit" class="flex-1 rounded-xl bg-blue-600 p-3 font-bold text-white hover:bg-blue-700">Simpan Produk</button>
+                                <button type="button" id="cancel-edit" onclick="resetProductForm()" class="hidden rounded-xl bg-slate-200 px-4 font-bold text-slate-700">Batal</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="grid content-start gap-3 sm:grid-cols-2">
+                        <?php if (empty($products)): ?>
+                            <div class="sm:col-span-2 rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm font-bold text-slate-400">Belum ada produk. Tambahkan produk pertama dari form.</div>
+                        <?php endif; ?>
+                        <?php foreach ($products as $product): ?>
+                            <?php $product_image = !empty($product->image) ? (preg_match('#^https?://#i', $product->image) ? $product->image : base_url('uploads/' . ltrim($product->image, '/'))) : 'https://placehold.co/300x200/f8fafc/64748b?text=Produk'; ?>
+                            <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                                <img src="<?= html_escape($product_image) ?>" alt="<?= html_escape($product->menu_name) ?>" class="h-36 w-full object-cover">
+                                <div class="p-4">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <p class="truncate font-black text-slate-800"><?= html_escape($product->menu_name) ?></p>
+                                            <p class="text-xs text-slate-400"><?= html_escape($product->nama_kategori ?? '-') ?></p>
+                                        </div>
+                                        <span class="shrink-0 rounded-full px-2 py-1 text-[10px] font-black <?= (int)$product->status === 1 ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' ?>"><?= (int)$product->status === 1 ? 'AKTIF' : 'NONAKTIF' ?></span>
+                                    </div>
+                                    <p class="mt-2 font-black text-blue-600"><?= format_rupiah($product->price) ?></p>
+                                    <div class="mt-3 flex gap-2">
+                                        <button type="button" onclick='editProduct(<?= json_encode(array('id' => (int)$product->id_menu, 'name' => $product->menu_name, 'category' => (int)$product->id_kategori, 'price' => (int)$product->price, 'status' => (int)$product->status), JSON_HEX_APOS | JSON_HEX_QUOT) ?>)' class="flex-1 rounded-lg bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">Edit</button>
+                                        <form method="POST" class="flex-1" onsubmit="return confirm('Hapus produk ini?')">
+                                            <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                                            <input type="hidden" name="action" value="delete_product">
+                                            <input type="hidden" name="id_menu" value="<?= (int)$product->id_menu ?>">
+                                            <button type="submit" class="w-full rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-700">Hapus</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
             <div class="mt-8">
                 <h2 class="text-lg font-black text-slate-800">Transaksi Terbaru</h2>
                 <div class="overflow-hidden rounded-2xl border border-slate-200 mt-3">
@@ -62,5 +142,31 @@
             </div>
         </div>
     </div>
+    <script>
+        function editProduct(product) {
+            document.getElementById('product-action').value = 'update_product';
+            document.getElementById('product-id').value = product.id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-status').value = product.status;
+            document.getElementById('product-image').required = false;
+            document.getElementById('product-image-help').textContent = 'Opsional. Kosongkan jika foto tidak diganti.';
+            document.getElementById('product-form-title').textContent = 'Edit Produk';
+            document.getElementById('cancel-edit').classList.remove('hidden');
+            document.getElementById('product-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetProductForm() {
+            const form = document.getElementById('product-form');
+            form.reset();
+            document.getElementById('product-action').value = 'create_product';
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-image').required = true;
+            document.getElementById('product-image-help').textContent = 'Wajib. JPG, PNG, atau WebP maksimal 5 MB.';
+            document.getElementById('product-form-title').textContent = 'Tambah Produk';
+            document.getElementById('cancel-edit').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
