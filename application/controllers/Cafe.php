@@ -18,6 +18,20 @@ class Cafe extends CI_Controller
             show_404();
         }
 
+        $shared_referral = strtoupper(trim((string)($this->input->get('reff', TRUE) ?: $this->input->get('ref', TRUE))));
+        if ($shared_referral !== '' && $this->db->where('reff', $shared_referral)->count_all_results('members') > 0) {
+            $this->input->set_cookie(array(
+                'name' => 'referral',
+                'value' => $shared_referral,
+                'expire' => 60 * 60 * 24 * 30,
+                'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                'httponly' => TRUE,
+                'samesite' => 'Lax',
+            ));
+        } else {
+            $shared_referral = '';
+        }
+
         $categories = $this->Cafe_model->get_categories($id_cafe);
         $menus = array();
         foreach ($categories as $category) {
@@ -37,6 +51,7 @@ class Cafe extends CI_Controller
             'member_reff' => $member_reff,
             'member_name' => $member_name,
             'logged_in' => $logged_in,
+            'shared_referral' => $shared_referral,
         ));
     }
 }

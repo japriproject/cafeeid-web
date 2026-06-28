@@ -39,11 +39,16 @@
                         <div class="flex-1 text-center md:text-left">
                             <div class="flex w-full items-center justify-between gap-3 mb-2">
                                 <div class="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold uppercase"><i class="fa-solid fa-laptop-file"></i> Reservasi & Order</div>
-                                <?php if ($has_location): ?>
-                                    <a href="<?= $maps_url ?>" target="_blank" rel="noopener noreferrer" aria-label="Buka lokasi di Google Maps" class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-105 transition">
-                                        <i class="fa-solid fa-map text-xs"></i>
-                                    </a>
-                                <?php endif; ?>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="shareCafe()" aria-label="Bagikan kafe<?= $logged_in ? ' dengan link referral' : '' ?>" class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-orange-50 text-orange-600 hover:bg-orange-100 hover:scale-105 transition">
+                                        <i class="fa-solid fa-share-nodes text-xs"></i>
+                                    </button>
+                                    <?php if ($has_location): ?>
+                                        <a href="<?= $maps_url ?>" target="_blank" rel="noopener noreferrer" aria-label="Buka lokasi di Google Maps" class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-105 transition">
+                                            <i class="fa-solid fa-map text-xs"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                             <h2 class="text-2xl md:text-4xl font-black text-slate-900 mb-2 leading-tight"><?= html_escape($cafe->cafe_name) ?></h2>
                             <p class="text-slate-500 font-medium text-sm leading-relaxed max-w-lg mb-3"><i class="fa-solid fa-location-dot text-orange-500"></i> <?= html_escape($cafe->address) ?></p>
@@ -175,6 +180,35 @@
     </div>
 
     <script>
+        async function shareCafe() {
+            const shareUrl = <?= json_encode(site_url('cafe/detail/' . (int)$cafe->id_cafe) . ($logged_in ? '?reff=' . rawurlencode($member_reff) : '')) ?>;
+            const shareData = {
+                title: <?= json_encode($cafe->cafe_name . ' - CariCafe') ?>,
+                text: <?= json_encode('Lihat menu dan reservasi di ' . $cafe->cafe_name . ' melalui CariCafe:') ?>,
+                url: shareUrl
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    return;
+                }
+                await navigator.clipboard.writeText(shareUrl);
+                alert('Link kafe berhasil disalin!');
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    window.prompt('Salin link berikut:', shareUrl);
+                }
+            }
+        }
+
+        <?php if (!empty($shared_referral)): ?>
+        localStorage.setItem('cafeeid_referral', JSON.stringify({
+            code: <?= json_encode($shared_referral) ?>,
+            expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+        }));
+        <?php endif; ?>
+
         let cart = [];
 
         function addToCart(id, name, price) {
