@@ -21,7 +21,7 @@
     <div class="glass-nav border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <button onclick="history.back()" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition"><i class="fa-solid fa-arrow-left"></i></button>
+                <a href="<?= site_url('home') ?>" aria-label="Kembali ke beranda" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition"><i class="fa-solid fa-arrow-left"></i></a>
                 <h1 class="text-lg font-bold text-slate-900 hidden md:block"><?= html_escape($cafe->cafe_name) ?></h1>
             </div>
             <a href="<?= site_url('home') ?>" class="text-orange-600 font-bold text-xs inline-flex items-center gap-2"><i class="fa-solid fa-house"></i> Beranda</a>
