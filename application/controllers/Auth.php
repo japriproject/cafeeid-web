@@ -25,7 +25,22 @@ class Auth extends CI_Controller
             $redirect = site_url('home');
         }
 
-        $referral = trim((string)($this->input->get('reff', TRUE) ?: $this->input->get('ref', TRUE)));
+        $referral = strtoupper(trim((string)($this->input->get('reff', TRUE) ?: $this->input->get('ref', TRUE))));
+        if ($referral !== '' && $this->Auth_model->get_member_by_reff($referral)) {
+            $this->input->set_cookie(array(
+                'name' => 'referral',
+                'value' => $referral,
+                'expire' => 60 * 60 * 24 * 30,
+                'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                'httponly' => TRUE,
+                'samesite' => 'Lax',
+            ));
+        } elseif ($referral === '') {
+            $cached_referral = strtoupper(trim((string)$this->input->cookie('referral', TRUE)));
+            if ($cached_referral !== '' && $this->Auth_model->get_member_by_reff($cached_referral)) {
+                $referral = $cached_referral;
+            }
+        }
 
         if (strtoupper($this->input->method()) === 'POST') {
             $name = trim((string)$this->input->post('name', TRUE));

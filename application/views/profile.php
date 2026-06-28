@@ -48,6 +48,9 @@
                                 <i class="fa-solid fa-copy text-xs"></i>
                             </button>
                         </div>
+                        <button type="button" onclick="shareReferral()" class="mt-3 inline-flex items-center gap-2 rounded-full bg-orange-600 px-5 py-2.5 text-xs font-black text-white shadow-lg hover:bg-orange-700">
+                            <i class="fa-solid fa-share-nodes"></i> Bagikan Link Referral
+                        </button>
                     </div>
                     <button type="button" @click="editing = true" class="bg-slate-900 text-white px-8 py-3 rounded-full font-bold text-xs tracking-widest shadow-xl hover:bg-orange-600 transition-all uppercase hover:scale-105 transform">Edit Profil</button>
                 </div>
@@ -89,5 +92,28 @@
     </main>
 
     <?php $active = 'profile'; include APPPATH . 'views/partials/mobile_nav.php'; ?>
+    <script>
+    async function shareReferral() {
+        const referralUrl = <?= json_encode(site_url('auth/register?reff=' . rawurlencode($reff))) ?>;
+        const shareData = {
+            title: 'Daftar CariCafe',
+            text: 'Daftar CariCafe lewat link referral saya:',
+            url: referralUrl
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+                return;
+            }
+            await navigator.clipboard.writeText(referralUrl);
+            alert('Link referral berhasil disalin!');
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                window.prompt('Salin link referral berikut:', referralUrl);
+            }
+        }
+    }
+    </script>
 </body>
 </html>

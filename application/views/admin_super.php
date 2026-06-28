@@ -21,18 +21,23 @@
             </div>
 
             <?php if ($message): ?>
-                <div class="mt-4 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl px-4 py-3 text-sm font-bold"><?= html_escape($message) ?></div>
+                <div class="mt-4 <?= ($message_type ?? 'success') === 'error' ? 'bg-red-50 text-red-800 border-red-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200' ?> border rounded-xl px-4 py-3 text-sm font-bold"><?= html_escape($message) ?></div>
             <?php endif; ?>
 
             <div class="grid lg:grid-cols-2 gap-6 mt-6">
                 <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
                     <h2 class="text-lg font-black text-slate-800">Tambah Kafe Baru</h2>
-                    <form method="POST" class="mt-4 grid gap-3 text-sm">
+                    <form method="POST" enctype="multipart/form-data" class="mt-4 grid gap-3 text-sm">
                         <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                         <input type="hidden" name="submit" value="1">
                         <input required type="text" name="username" placeholder="Username" class="border rounded-xl p-3">
                         <input required type="password" name="password" placeholder="Password" class="border rounded-xl p-3">
                         <input required type="text" name="cafe_name" placeholder="Nama Kafe" class="border rounded-xl p-3">
+                        <label class="border border-dashed border-slate-300 bg-white rounded-xl p-3 cursor-pointer">
+                            <span class="block font-bold text-slate-700">Thumbnail Kafe</span>
+                            <span class="block text-xs text-slate-400 mb-2">JPG, PNG, atau WebP. Maksimal 5 MB.</span>
+                            <input required type="file" name="thumbnail" accept="image/jpeg,image/png,image/webp" class="block w-full text-xs text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:font-bold file:text-blue-700">
+                        </label>
                         <textarea name="address" placeholder="Alamat" class="border rounded-xl p-3 min-h-[80px]"></textarea>
                         <input type="text" name="kota" placeholder="Kota" class="border rounded-xl p-3">
                         <div class="grid grid-cols-2 gap-2">

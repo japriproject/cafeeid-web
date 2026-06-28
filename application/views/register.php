@@ -38,7 +38,7 @@
 
             <div>
                 <label class="text-[11px] font-black text-slate-400 block mb-2 uppercase tracking-[0.18em]">Kode Referral</label>
-                <input type="text" name="referral" value="<?= html_escape($referral ?? '') ?>" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-base font-bold uppercase text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder:text-slate-400" placeholder="Opsional">
+                <input type="text" name="referral" value="<?= html_escape($referral ?? '') ?>" <?= !empty($referral) ? 'readonly' : '' ?> class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 text-base font-bold uppercase text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder:text-slate-400" placeholder="Opsional">
                 <p class="text-[10px] text-slate-400 mt-1">Kosongkan jika tidak punya kode referral.</p>
             </div>
 
@@ -82,5 +82,13 @@
             icon.className = visible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
         }
     </script>
+<?php if (!empty($referral)): ?>
+<script>
+localStorage.setItem('cafeeid_referral', JSON.stringify({
+    code: <?= json_encode($referral) ?>,
+    expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+}));
+</script>
+<?php endif; ?>
 </body>
 </html>
