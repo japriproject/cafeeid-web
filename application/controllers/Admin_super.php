@@ -19,6 +19,8 @@ class Admin_super extends CI_Controller
         $message_type = 'success';
 
         if ($this->input->post('submit')) {
+            $edit_id = (int)$this->input->post('edit_id');
+            $existing_cafe = $edit_id > 0 ? $this->Admin_model->get_cafe_for_admin($edit_id) : null;
             $username = trim((string)$this->input->post('username', TRUE));
             $password = (string)$this->input->post('password', TRUE);
             $cafe_name = trim((string)$this->input->post('cafe_name', TRUE));
@@ -28,7 +30,7 @@ class Admin_super extends CI_Controller
 
             if (!preg_match('/^[a-zA-Z0-9_.-]{3,50}$/', $username)) {
                 $message = 'Username hanya boleh huruf, angka, titik, underscore, dan strip.';
-            } elseif (strlen($password) < 8) {
+            } elseif ((!$existing_cafe || $password !== '') && strlen($password) < 8) {
                 $message = 'Password minimal 8 karakter.';
             } elseif ($cafe_name === '') {
                 $message = 'Nama kafe wajib diisi.';
@@ -37,14 +39,13 @@ class Admin_super extends CI_Controller
             } elseif ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
                 $message = 'Koordinat tidak valid.';
             } else {
-                $thumbnail = $this->upload_thumbnail();
+                $thumbnail = $this->upload_thumbnail((bool)$existing_cafe);
                 if (!$thumbnail['success']) {
                     $message = $thumbnail['message'];
                     $message_type = 'error';
                 } else {
                     $data = array(
                         'username' => $username,
-                        'password' => password_hash($password, PASSWORD_DEFAULT),
                         'cafe_name' => $cafe_name,
                         'address' => $this->input->post('address', TRUE),
                         'kota' => $this->input->post('kota', TRUE),
@@ -52,21 +53,34 @@ class Admin_super extends CI_Controller
                         'longitude' => $longitude,
                         'prefix_invoice' => $this->input->post('prefix_invoice', TRUE),
                         'status_meja' => $status_meja,
-                        'image_2' => base_url('uploads/cafe_thumbnails/' . $thumbnail['file_name']),
-                        'created_at' => date('Y-m-d H:i:s'),
                     );
 
-                    if ($this->Admin_model->insert_cafe($data)) {
-                        $message = 'Kafe berhasil ditambahkan.';
+                    if ($password !== '') {
+                        $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+                    }
+                    if (!empty($thumbnail['file_name'])) {
+                        $data['image_2'] = base_url('uploads/cafe_thumbnails/' . $thumbnail['file_name']);
+                    }
+                    if (!$existing_cafe) {
+                        $data['created_at'] = date('Y-m-d H:i:s');
+                    }
+
+                    $saved = $existing_cafe
+                        ? $this->Admin_model->update_cafe($edit_id, $data)
+                        : $this->Admin_model->insert_cafe($data);
+                    if ($saved) {
+                        $message = $existing_cafe ? 'Kafe berhasil diperbarui.' : 'Kafe berhasil ditambahkan.';
                     } else {
-                        @unlink($thumbnail['full_path']);
+                        if (!empty($thumbnail['full_path'])) {
+                            @unlink($thumbnail['full_path']);
+                        }
                         $message = 'Kafe gagal disimpan. Pastikan username belum digunakan.';
                         $message_type = 'error';
                     }
                 }
             }
 
-            if ($message && $message !== 'Kafe berhasil ditambahkan.') {
+            if ($message && !in_array($message, array('Kafe berhasil ditambahkan.', 'Kafe berhasil diperbarui.'), TRUE)) {
                 $message_type = 'error';
             }
         }
@@ -85,9 +99,12 @@ class Admin_super extends CI_Controller
         ));
     }
 
-    private function upload_thumbnail()
+    private function upload_thumbnail($optional = FALSE)
     {
         if (empty($_FILES['thumbnail']['name']) || empty($_FILES['thumbnail']['tmp_name'])) {
+            if ($optional) {
+                return array('success' => TRUE, 'file_name' => null, 'full_path' => null);
+            }
             return array('success' => FALSE, 'message' => 'Thumbnail kafe wajib diunggah.');
         }
 

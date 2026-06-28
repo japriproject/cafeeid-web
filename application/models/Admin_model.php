@@ -14,6 +14,16 @@ class Admin_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    public function get_cafe_for_admin($id_cafe)
+    {
+        return $this->db->get_where('cafes', array('id_cafe' => (int)$id_cafe))->row();
+    }
+
+    public function update_cafe($id_cafe, array $data)
+    {
+        return $this->db->where('id_cafe', (int)$id_cafe)->update('cafes', $data);
+    }
+
     public function delete_cafe($id_cafe)
     {
         return $this->db->where('id_cafe', (int)$id_cafe)->delete('cafes');
@@ -66,5 +76,45 @@ class Admin_model extends CI_Model
             ->where('id_menu', (int)$id_menu)
             ->where('id_cafe', (int)$id_cafe)
             ->delete('menus');
+    }
+
+    public function ensure_tables_table()
+    {
+        return $this->db->query("CREATE TABLE IF NOT EXISTS `meja` (
+            `id_meja` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `id_cafe` INT NOT NULL,
+            `nomor_meja` VARCHAR(30) NOT NULL,
+            `kapasitas` INT NOT NULL DEFAULT 2,
+            `status` ENUM('tersedia','terisi','nonaktif') NOT NULL DEFAULT 'tersedia',
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id_meja`),
+            UNIQUE KEY `uniq_cafe_nomor` (`id_cafe`, `nomor_meja`),
+            KEY `idx_meja_cafe` (`id_cafe`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    }
+
+    public function get_cafe_tables($id_cafe)
+    {
+        return $this->db->where('id_cafe', (int)$id_cafe)->order_by('nomor_meja', 'ASC')->get('meja')->result();
+    }
+
+    public function get_cafe_table($id_meja, $id_cafe)
+    {
+        return $this->db->get_where('meja', array('id_meja' => (int)$id_meja, 'id_cafe' => (int)$id_cafe))->row();
+    }
+
+    public function insert_cafe_table(array $data)
+    {
+        return $this->db->insert('meja', $data);
+    }
+
+    public function update_cafe_table($id_meja, $id_cafe, array $data)
+    {
+        return $this->db->where('id_meja', (int)$id_meja)->where('id_cafe', (int)$id_cafe)->update('meja', $data);
+    }
+
+    public function delete_cafe_table($id_meja, $id_cafe)
+    {
+        return $this->db->where('id_meja', (int)$id_meja)->where('id_cafe', (int)$id_cafe)->delete('meja');
     }
 }

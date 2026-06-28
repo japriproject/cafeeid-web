@@ -35,6 +35,31 @@
                 </div>
             </div>
 
+            <div id="kelola-meja" class="mt-8 border-t border-slate-200 pt-8">
+                <h2 class="text-lg font-black text-slate-800">Kelola Meja</h2>
+                <?php if ($this->session->flashdata('table_success')): ?><div class="mt-3 rounded-xl bg-emerald-50 p-3 text-sm font-bold text-emerald-800"><?= html_escape($this->session->flashdata('table_success')) ?></div><?php endif; ?>
+                <?php if ($this->session->flashdata('table_error')): ?><div class="mt-3 rounded-xl bg-red-50 p-3 text-sm font-bold text-red-800"><?= html_escape($this->session->flashdata('table_error')) ?></div><?php endif; ?>
+                <form method="POST" id="table-form" class="mt-4 grid gap-3 rounded-2xl border bg-slate-50 p-4 md:grid-cols-5">
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                    <input type="hidden" name="action" id="table-action" value="create_table">
+                    <input type="hidden" name="id_meja" id="table-id">
+                    <input required type="number" min="1" max="9999" name="nomor_meja" id="table-number" placeholder="Nomor meja" class="rounded-xl border p-3 text-sm">
+                    <input required type="number" min="1" max="100" name="kapasitas" id="table-capacity" value="2" placeholder="Kapasitas" class="rounded-xl border p-3 text-sm">
+                    <select name="table_status" id="table-status" class="rounded-xl border p-3 text-sm"><option value="tersedia">Tersedia</option><option value="terisi">Terisi</option><option value="nonaktif">Nonaktif</option></select>
+                    <button class="rounded-xl bg-blue-600 p-3 text-sm font-bold text-white">Simpan Meja</button>
+                    <button type="button" id="cancel-table-edit" onclick="resetTableForm()" class="hidden rounded-xl bg-slate-200 p-3 text-sm font-bold">Batal</button>
+                </form>
+                <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <?php foreach ($tables as $table): ?>
+                        <div class="flex items-center justify-between rounded-xl border bg-white p-3">
+                            <div><p class="font-black text-slate-800">Meja <?= html_escape($table->nomor_meja) ?></p><p class="text-xs text-slate-500"><?= (int)$table->kapasitas ?> kursi · <?= html_escape(ucfirst($table->status)) ?></p></div>
+                            <div class="flex gap-1"><button type="button" onclick='editTable(<?= json_encode(array('id'=>(int)$table->id_meja,'number'=>$table->nomor_meja,'capacity'=>(int)$table->kapasitas,'status'=>$table->status), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' class="rounded-lg bg-amber-50 px-2 py-2 text-xs font-bold text-amber-700">Edit</button><form method="POST" onsubmit="return confirm('Hapus meja ini?')"><input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>"><input type="hidden" name="action" value="delete_table"><input type="hidden" name="id_meja" value="<?= (int)$table->id_meja ?>"><button class="rounded-lg bg-red-50 px-2 py-2 text-xs font-bold text-red-700">Hapus</button></form></div>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if (empty($tables)): ?><p class="text-sm font-bold text-slate-400">Belum ada data meja.</p><?php endif; ?>
+                </div>
+            </div>
+
             <div id="kelola-produk" class="mt-8 border-t border-slate-200 pt-8">
                 <div class="flex items-center justify-between gap-3">
                     <div>
@@ -143,6 +168,16 @@
         </div>
     </div>
     <script>
+        function editTable(table) {
+            document.getElementById('table-action').value = 'update_table'; document.getElementById('table-id').value = table.id;
+            document.getElementById('table-number').value = table.number; document.getElementById('table-capacity').value = table.capacity;
+            document.getElementById('table-status').value = table.status; document.getElementById('cancel-table-edit').classList.remove('hidden');
+            document.getElementById('table-form').scrollIntoView({behavior:'smooth'});
+        }
+        function resetTableForm() {
+            document.getElementById('table-form').reset(); document.getElementById('table-action').value = 'create_table';
+            document.getElementById('table-id').value = ''; document.getElementById('cancel-table-edit').classList.add('hidden');
+        }
         function editProduct(product) {
             document.getElementById('product-action').value = 'update_product';
             document.getElementById('product-id').value = product.id;

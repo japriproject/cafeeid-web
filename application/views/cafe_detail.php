@@ -147,9 +147,12 @@
                                         <label class="text-[10px] font-black text-slate-400 block mb-1 uppercase">Pilih Nomor Meja</label>
                                         <select name="nomor_meja" id="nomor_meja" class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
                                             <option value="0">Pilih nomor meja</option>
-                                            <?php for ($m = 1; $m <= 30; $m++): ?>
-                                                <option value="<?= $m ?>"><?= $m ?></option>
-                                            <?php endfor; ?>
+                                            <?php foreach ($available_tables as $table): ?>
+                                                <option value="<?= html_escape($table->nomor_meja) ?>"><?= html_escape($table->nomor_meja) ?> (<?= (int)$table->kapasitas ?> kursi)</option>
+                                            <?php endforeach; ?>
+                                            <?php if (empty($available_tables)): ?>
+                                                <?php for ($m = 1; $m <= 30; $m++): ?><option value="<?= $m ?>"><?= $m ?></option><?php endfor; ?>
+                                            <?php endif; ?>
                                         </select>
                                     </div>
                                     <!-- Jumlah kursi dihapus - di-handle nanti jika diperlukan -->

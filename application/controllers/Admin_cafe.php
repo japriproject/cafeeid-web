@@ -17,6 +17,7 @@ class Admin_cafe extends CI_Controller
     public function settlement()
     {
         $id_cafe = (int)$this->session->userdata('owner_cafe_id');
+        $this->Admin_model->ensure_tables_table();
 
         if (strtoupper($this->input->method()) === 'POST') {
             $this->handle_product_action($id_cafe);
@@ -39,6 +40,7 @@ class Admin_cafe extends CI_Controller
             'total_earned' => $total_earned,
             'categories' => $this->Cafe_model->get_categories($id_cafe),
             'products' => $this->Admin_model->get_cafe_products($id_cafe),
+            'tables' => $this->Admin_model->get_cafe_tables($id_cafe),
         ));
     }
 
@@ -46,6 +48,11 @@ class Admin_cafe extends CI_Controller
     {
         $action = (string)$this->input->post('action', TRUE);
         $id_menu = (int)$this->input->post('id_menu');
+
+        if (in_array($action, array('create_table', 'update_table', 'delete_table'), TRUE)) {
+            $this->handle_table_action($id_cafe, $action);
+            return;
+        }
 
         if ($action === 'delete_product') {
             $product = $this->Admin_model->get_cafe_product($id_menu, $id_cafe);
@@ -155,6 +162,45 @@ class Admin_cafe extends CI_Controller
             return array('success' => FALSE, 'message' => 'Foto produk gagal disimpan.');
         }
         return array('success' => TRUE, 'path' => 'products/' . $filename);
+    }
+
+    private function handle_table_action($id_cafe, $action)
+    {
+        $id_meja = (int)$this->input->post('id_meja');
+        $table = $id_meja > 0 ? $this->Admin_model->get_cafe_table($id_meja, $id_cafe) : null;
+        if ($action === 'delete_table') {
+            if ($table && $this->Admin_model->delete_cafe_table($id_meja, $id_cafe)) {
+                $this->session->set_flashdata('table_success', 'Meja berhasil dihapus.');
+            } else {
+                $this->session->set_flashdata('table_error', 'Meja tidak ditemukan.');
+            }
+            return;
+        }
+
+        if ($action === 'update_table' && !$table) {
+            $this->session->set_flashdata('table_error', 'Meja tidak ditemukan.');
+            return;
+        }
+        $nomor = trim((string)$this->input->post('nomor_meja', TRUE));
+        $kapasitas = (int)$this->input->post('kapasitas');
+        $status = (string)$this->input->post('table_status', TRUE);
+        if (!preg_match('/^[0-9]{1,4}$/', $nomor) || $kapasitas < 1 || $kapasitas > 100 || !in_array($status, array('tersedia', 'terisi', 'nonaktif'), TRUE)) {
+            $this->session->set_flashdata('table_error', 'Data meja tidak valid.');
+            return;
+        }
+        $duplicate = $this->db->where('id_cafe', $id_cafe)->where('nomor_meja', $nomor);
+        if ($id_meja > 0) {
+            $duplicate->where('id_meja !=', $id_meja);
+        }
+        if ($duplicate->count_all_results('meja') > 0) {
+            $this->session->set_flashdata('table_error', 'Nomor meja sudah digunakan.');
+            return;
+        }
+        $data = array('id_cafe' => $id_cafe, 'nomor_meja' => $nomor, 'kapasitas' => $kapasitas, 'status' => $status);
+        $saved = $action === 'create_table'
+            ? $this->Admin_model->insert_cafe_table($data)
+            : $this->Admin_model->update_cafe_table($id_meja, $id_cafe, $data);
+        $this->session->set_flashdata($saved ? 'table_success' : 'table_error', $saved ? 'Data meja berhasil disimpan.' : 'Data meja gagal disimpan.');
     }
 
     private function delete_product_image($path)

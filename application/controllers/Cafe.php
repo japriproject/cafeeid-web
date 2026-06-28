@@ -52,6 +52,7 @@ class Cafe extends CI_Controller
             'member_name' => $member_name,
             'logged_in' => $logged_in,
             'shared_referral' => $shared_referral,
+            'available_tables' => $this->Cafe_model->get_available_tables($id_cafe),
         ));
     }
 }

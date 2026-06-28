@@ -71,4 +71,12 @@ class Cafe_model extends CI_Model
         $row = $this->db->select('expiry_time')->get('settings')->row();
         return $row ? (int)$row->expiry_time : 60;
     }
+
+    public function get_available_tables($id_cafe)
+    {
+        if (!$this->db->table_exists('meja')) {
+            return array();
+        }
+        return $this->db->where(array('id_cafe' => (int)$id_cafe, 'status' => 'tersedia'))->order_by('nomor_meja', 'ASC')->get('meja')->result();
+    }
 }
