@@ -1,6 +1,6 @@
-# CafeeID
+# OLONA
 
-CafeeID adalah aplikasi web berbasis CodeIgniter 3 untuk pencarian cafe, reservasi/checkout, member, owner cafe, dan panel super admin.
+OLONA adalah aplikasi web berbasis CodeIgniter 3 untuk pencarian cafe, reservasi/checkout, member, owner cafe, dan panel super admin.
 
 ## Kebutuhan
 

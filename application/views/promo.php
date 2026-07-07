@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promo Spesial - CariCafe</title>
+    <title>Promo Spesial - OLONA</title>
+    <link rel="icon" type="image/jpeg" href="<?= base_url('assets/logo.jpg') ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('assets/css/legacy-cafeid.css') ?>">
@@ -11,7 +12,7 @@
 </head>
 <body class="text-slate-800 bg-slate-50 pb-24">
     <nav class="hidden md:flex items-center justify-between px-8 py-4 glass-nav sticky top-0 z-50 border-b border-slate-100">
-        <a href="<?= site_url('home') ?>" class="text-xl font-black text-slate-900 tracking-tight">Cari<span class="text-orange-600">Cafe</span>.</a>
+        <a href="<?= site_url('home') ?>" class="text-xl font-black text-slate-900 tracking-tight">OLONA<span class="text-orange-600">.</span></a>
         <div class="flex gap-6 text-sm font-bold text-slate-500">
             <a href="<?= site_url('home') ?>" class="hover:text-orange-600 transition">Beranda</a>
             <a href="<?= site_url('cari') ?>" class="hover:text-orange-600 transition">Cari Cafe</a>

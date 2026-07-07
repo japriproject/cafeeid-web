@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CariCafe - Jelajahi Kafe Terbaik</title>
+    <title>OLONA - Jelajahi Kafe Terbaik</title>
+    <link rel="icon" type="image/jpeg" href="<?= base_url('assets/logo.jpg') ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('assets/css/legacy-cafeid.css') ?>">
@@ -14,7 +15,7 @@
         <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between relative">
             <div class="flex items-center gap-4 md:gap-6 z-20">
                 <a href="<?= site_url('home') ?>" class="flex items-center gap-2">
-                    <span class="text-xl font-black text-slate-900 tracking-tight">Cari<span class="text-orange-600">Cafe</span>.</span>
+                    <span class="text-xl font-black text-slate-900 tracking-tight">OLONA<span class="text-orange-600">.</span></span>
                 </a>
                 <div class="relative group">
                     <button type="button" class="flex items-center gap-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-2 md:px-4 rounded-full transition cursor-pointer">
@@ -194,7 +195,7 @@
     <footer class="bg-slate-900 text-white pt-8 sm:pt-10 pb-24 md:pb-10 mt-8">
         <div class="max-w-6xl mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             <div>
-                <h2 class="text-xl font-black">CariCafe<span class="text-orange-500">.</span></h2>
+                <h2 class="text-xl font-black">OLONA<span class="text-orange-500">.</span></h2>
                 <p class="text-slate-400 text-sm mt-3 leading-relaxed">Platform reservasi dan booking meja cafe termudah di kotamu. Temukan tempat, pesan menu, dan nikmati suasana terbaik.</p>
             </div>
             <div>
@@ -209,13 +210,13 @@
                 <h4 class="font-bold text-sm uppercase tracking-wide mb-3">Hubungi Kami</h4>
                 <ul class="space-y-2 text-sm text-slate-300">
                     <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-orange-400"></i> +62 812-3456-7890</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-orange-400"></i> help@caricafe.id</li>
-                    <li class="flex items-center gap-2"><i class="fa-brands fa-instagram text-orange-400"></i> @caricafe.id</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-orange-400"></i> help@olona.id</li>
+                    <li class="flex items-center gap-2"><i class="fa-brands fa-instagram text-orange-400"></i> @olona.id</li>
                 </ul>
             </div>
         </div>
         <div class="max-w-6xl mx-auto px-4 md:px-6 mt-8 pt-4 border-t border-white/10 text-xs text-slate-500">
-            © 2026 CariCafe Indonesia. All rights reserved.
+            © 2026 OLONA Indonesia. All rights reserved.
         </div>
     </footer>
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 px-6 py-3 flex justify-between items-center z-50 pb-safe mobile-bottom-nav">

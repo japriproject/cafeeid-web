@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Saya - CariCafe</title>
+    <title>Profil Saya - OLONA</title>
+    <link rel="icon" type="image/jpeg" href="<?= base_url('assets/logo.jpg') ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +13,7 @@
 </head>
 <body x-data="{ editing: false }" class="bg-slate-50 pb-24 text-slate-800">
     <div class="hidden md:flex items-center justify-between px-8 py-4 glass-nav sticky top-0 z-50 border-b border-slate-100">
-        <a href="<?= site_url('home') ?>" class="text-xl font-black text-slate-900 tracking-tight">Cari<span class="text-orange-600">Cafe</span>.</a>
+        <a href="<?= site_url('home') ?>" class="text-xl font-black text-slate-900 tracking-tight">OLONA<span class="text-orange-600">.</span></a>
         <a href="<?= site_url('home') ?>" class="text-sm font-bold text-slate-500 hover:text-slate-900">Kembali ke Beranda</a>
     </div>
 
@@ -27,7 +28,7 @@
         <h1 class="text-2xl font-black text-slate-900 md:hidden">Profil Saya</h1>
 
         <?php
-            $name = $member ? $member->name : 'Member CariCafe';
+            $name = $member ? $member->name : 'Member OLONA';
             $phone = $member ? $member->phone : '';
         ?>
         <section class="bg-white p-8 md:p-10 rounded-[3rem] shadow-xl border border-slate-100 text-center relative overflow-hidden group">
@@ -96,8 +97,8 @@
     async function shareReferral() {
         const referralUrl = <?= json_encode(site_url('auth/register?reff=' . rawurlencode($reff))) ?>;
         const shareData = {
-            title: 'Daftar CariCafe',
-            text: 'Daftar CariCafe lewat link referral saya:',
+            title: 'Daftar OLONA',
+            text: 'Daftar OLONA lewat link referral saya:',
             url: referralUrl
         };
 
