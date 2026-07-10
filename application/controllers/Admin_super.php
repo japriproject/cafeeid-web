@@ -13,6 +13,11 @@ class Admin_super extends CI_Controller
         }
     }
 
+    public function index()
+    {
+        redirect(site_url('admin_super/manage_cafe'));
+    }
+
     public function manage_cafe()
     {
         $message = null;

@@ -14,16 +14,81 @@ class Admin_cafe extends CI_Controller
         }
     }
 
+    public function index()
+    {
+        redirect(site_url('admin_cafe/dashboard'));
+    }
+
     public function settlement()
+    {
+        redirect(site_url('admin_cafe/dashboard'));
+    }
+
+    public function dashboard()
+    {
+        $this->render_panel('dashboard');
+    }
+
+    public function konfirmasi_pesanan()
+    {
+        $id_cafe = (int)$this->session->userdata('owner_cafe_id');
+
+        if (strtoupper($this->input->method()) === 'POST') {
+            $this->confirm_pending_order($id_cafe);
+            redirect(site_url('admin_cafe/konfirmasi_pesanan'));
+        }
+
+        $this->render_panel('orders');
+    }
+
+    public function kelola_meja()
     {
         $id_cafe = (int)$this->session->userdata('owner_cafe_id');
         $this->Admin_model->ensure_tables_table();
 
         if (strtoupper($this->input->method()) === 'POST') {
-            $this->handle_product_action($id_cafe);
-            redirect(site_url('admin_cafe/settlement#kelola-produk'));
+            $action = (string)$this->input->post('action', TRUE);
+            $this->handle_table_action($id_cafe, $action);
+            redirect(site_url('admin_cafe/kelola_meja'));
         }
 
+        $this->render_panel('tables');
+    }
+
+    public function kelola_produk()
+    {
+        $id_cafe = (int)$this->session->userdata('owner_cafe_id');
+
+        if (strtoupper($this->input->method()) === 'POST') {
+            $action = (string)$this->input->post('action', TRUE);
+            $this->handle_product_action($id_cafe, $action);
+            redirect(site_url('admin_cafe/kelola_produk'));
+        }
+
+        $this->render_panel('products');
+    }
+
+    public function transaksi()
+    {
+        $this->render_panel('transactions');
+    }
+
+    public function setting()
+    {
+        $id_cafe = (int)$this->session->userdata('owner_cafe_id');
+
+        if (strtoupper($this->input->method()) === 'POST') {
+            $this->update_cafe_setting($id_cafe);
+            redirect(site_url('admin_cafe/setting'));
+        }
+
+        $this->render_panel('settings');
+    }
+
+    private function render_panel($active_page)
+    {
+        $id_cafe = (int)$this->session->userdata('owner_cafe_id');
+        $this->Admin_model->ensure_tables_table();
         $cafe = $this->Cafe_model->get_cafe($id_cafe);
         $transactions = $this->Admin_model->get_cafe_transactions($id_cafe);
 
@@ -41,12 +106,110 @@ class Admin_cafe extends CI_Controller
             'categories' => $this->Cafe_model->get_categories($id_cafe),
             'products' => $this->Admin_model->get_cafe_products($id_cafe),
             'tables' => $this->Admin_model->get_cafe_tables($id_cafe),
+            'pending_orders' => $this->Admin_model->get_pending_cafe_orders($id_cafe),
+            'active_page' => $active_page,
+            'dashboard_stats' => $this->build_dashboard_stats($transactions),
         ));
     }
 
-    private function handle_product_action($id_cafe)
+    private function build_dashboard_stats($transactions)
+    {
+        $today = date('Y-m-d');
+        $stats = array(
+            'paid_orders' => 0,
+            'pending_orders' => 0,
+            'today_orders' => 0,
+            'today_sales' => 0,
+        );
+
+        foreach ($transactions as $transaction) {
+            $paid = (int)$transaction->status === 1;
+            if ($paid) {
+                $stats['paid_orders']++;
+            } else {
+                $stats['pending_orders']++;
+            }
+
+            if ((string)($transaction->date ?? '') === $today || strpos((string)$transaction->created_at, $today) === 0) {
+                $stats['today_orders']++;
+                if ($paid) {
+                    $stats['today_sales'] += (int)$transaction->sale;
+                }
+            }
+        }
+
+        return $stats;
+    }
+
+    private function confirm_pending_order($id_cafe)
     {
         $action = (string)$this->input->post('action', TRUE);
+        if ($action !== 'confirm_order') {
+            return;
+        }
+
+        $invoice = trim((string)$this->input->post('invoice', TRUE));
+        if ($invoice === '') {
+            $this->session->set_flashdata('order_error', 'Invoice tidak valid.');
+        } elseif ($this->Admin_model->confirm_cafe_order($id_cafe, $invoice)) {
+            $this->session->set_flashdata('order_success', 'Pesanan berhasil dikonfirmasi lunas.');
+        } else {
+            $this->session->set_flashdata('order_error', 'Pesanan tidak ditemukan atau sudah dikonfirmasi.');
+        }
+    }
+
+    private function update_cafe_setting($id_cafe)
+    {
+        $cafe_name = trim((string)$this->input->post('cafe_name', TRUE));
+        $status_meja = (string)$this->input->post('status_meja', TRUE);
+        $latitude = (float)$this->input->post('latitude');
+        $longitude = (float)$this->input->post('longitude');
+        $harga_reservasi = (int)preg_replace('/\D+/', '', (string)$this->input->post('harga_reservasi'));
+
+        if ($cafe_name === '' || strlen($cafe_name) > 100) {
+            $this->session->set_flashdata('setting_error', 'Nama cafe wajib diisi maksimal 100 karakter.');
+            return;
+        }
+        if (!in_array($status_meja, array('buka', 'penuh'), TRUE)) {
+            $this->session->set_flashdata('setting_error', 'Status meja tidak valid.');
+            return;
+        }
+        if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+            $this->session->set_flashdata('setting_error', 'Koordinat tidak valid.');
+            return;
+        }
+
+        $data = array(
+            'cafe_name' => $cafe_name,
+            'address' => trim((string)$this->input->post('address', TRUE)),
+            'kota' => trim((string)$this->input->post('kota', TRUE)),
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'status_meja' => $status_meja,
+            'harga_reservasi' => max(0, $harga_reservasi),
+            'payment_info' => trim((string)$this->input->post('payment_info', TRUE)),
+            'bank_bca_rek' => trim((string)$this->input->post('bank_bca_rek', TRUE)),
+            'bank_bca_an' => trim((string)$this->input->post('bank_bca_an', TRUE)),
+            'bank_bri_rek' => trim((string)$this->input->post('bank_bri_rek', TRUE)),
+            'bank_bri_an' => trim((string)$this->input->post('bank_bri_an', TRUE)),
+            'bank_mandiri_rek' => trim((string)$this->input->post('bank_mandiri_rek', TRUE)),
+            'bank_mandiri_an' => trim((string)$this->input->post('bank_mandiri_an', TRUE)),
+            'qris_name' => trim((string)$this->input->post('qris_name', TRUE)),
+            'qris_image' => trim((string)$this->input->post('qris_image', TRUE)),
+            'id_telegram_owner' => trim((string)$this->input->post('id_telegram_owner', TRUE)),
+            'id_telegram_kasir' => trim((string)$this->input->post('id_telegram_kasir', TRUE)),
+            'id_telegram_dapur' => trim((string)$this->input->post('id_telegram_dapur', TRUE)),
+        );
+
+        if ($this->Admin_model->update_cafe($id_cafe, $data)) {
+            $this->session->set_flashdata('setting_success', 'Setting data cafe berhasil disimpan.');
+        } else {
+            $this->session->set_flashdata('setting_error', 'Setting data cafe gagal disimpan.');
+        }
+    }
+
+    private function handle_product_action($id_cafe, $action)
+    {
         $id_menu = (int)$this->input->post('id_menu');
 
         if (in_array($action, array('create_table', 'update_table', 'delete_table'), TRUE)) {

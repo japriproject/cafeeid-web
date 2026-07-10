@@ -121,7 +121,7 @@ class Auth extends CI_Controller
             $this->clear_login_attempts($username);
             $this->session->sess_regenerate(TRUE);
             $this->session->set_userdata('owner_cafe_id', (int)$owner->id_cafe);
-            redirect(site_url('admin_cafe/settlement'));
+            redirect(site_url('admin_cafe/dashboard'));
         }
 
         if ($this->is_super_admin($username, $password)) {

@@ -209,7 +209,7 @@
             <div>
                 <h4 class="font-bold text-sm uppercase tracking-wide mb-3">Hubungi Kami</h4>
                 <ul class="space-y-2 text-sm text-slate-300">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-orange-400"></i> +62 812-3456-7890</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-orange-400"></i> 08815858934</li>
                     <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-orange-400"></i> help@olona.id</li>
                     <li class="flex items-center gap-2"><i class="fa-brands fa-instagram text-orange-400"></i> @olona.id</li>
                 </ul>

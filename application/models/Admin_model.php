@@ -37,6 +37,30 @@ class Admin_model extends CI_Model
             ->result();
     }
 
+    public function get_pending_cafe_orders($id_cafe)
+    {
+        return $this->db
+            ->where('id_cafe', (int)$id_cafe)
+            ->where('status', 0)
+            ->order_by('created_at', 'DESC')
+            ->get('transaksi')
+            ->result();
+    }
+
+    public function confirm_cafe_order($id_cafe, $invoice)
+    {
+        $this->db
+            ->where('id_cafe', (int)$id_cafe)
+            ->where('invoice', (string)$invoice)
+            ->where('status', 0)
+            ->update('transaksi', array(
+                'status' => 1,
+                'status_update' => 1,
+            ));
+
+        return $this->db->affected_rows() > 0;
+    }
+
     public function get_cafe_products($id_cafe)
     {
         return $this->db
